@@ -1,4 +1,4 @@
-"""DCAP: Dynamic Capability Adaptation Protocol."""
+"""DCAP: Dynamic Capability Adaptive Protocol."""
 from .api import Dcap
 
 __all__ = ["Dcap"]
