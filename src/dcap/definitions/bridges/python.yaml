@@ -1,0 +1,65 @@
+bridges:
+  - bridge: python.goal_block
+    version: "2.0"
+    language: python
+    match: {kind: block}
+    score: 1.0
+    template: |
+      import {{os}}
+      from {{module}} import run as {{name}}
+      {{switches}}
+
+  - bridge: python.switch_block
+    version: "3.0"
+    language: python
+    match: {kind: toggles}
+    score: 1.0
+    template: |
+      import {{os}}
+      {{tools}}
+
+  - bridge: python.function
+    version: "2.0"
+    language: python
+    match: {kind: function, async: false}
+    score: 1.0
+    template: |
+      import {{os}}
+      {{switches}}
+      from {{module}} import run as _dcap_run
+      return _dcap_run({{args}})
+
+  - bridge: python.async_function
+    version: "2.0"
+    language: python
+    match: {kind: function, async: true}
+    score: 1.0
+    template: |
+      import asyncio
+      import {{os}}
+      {{switches}}
+      from {{module}} import run as _dcap_run
+      return await asyncio.to_thread(_dcap_run, {{args}})
+
+  - bridge: python.method
+    version: "2.0"
+    language: python
+    match: {kind: method, async: false}
+    score: 1.0
+    template: |
+      import {{os}}
+      {{switches}}
+      from {{module}} import run as _dcap_run
+      return _dcap_run({{args}})
+
+  - bridge: python.async_method
+    version: "2.0"
+    language: python
+    match: {kind: method, async: true}
+    score: 1.0
+    template: |
+      import asyncio
+      import {{os}}
+      {{switches}}
+      from {{module}} import run as _dcap_run
+      return await asyncio.to_thread(_dcap_run, {{args}})

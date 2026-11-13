@@ -1,0 +1,109 @@
+goals:
+  - goal: WEB.PAGE_MAP
+    version: "1.0"
+    name: Map pages
+    outcome: List the pages of a site.
+    aliases:
+      - Discover pages
+      - Map pages
+      - Find pages on a target
+    parameters:
+      target: {type: Target, extract: target}
+    classes: [web]
+    dependencies:
+      - core: web.page_discovery
+        input: {target: target}
+        output: discovered_pages
+    result: {source: discovered_pages}
+
+  - goal: WEB.SITE_LINKS
+    version: "1.0"
+    name: Check site links
+    outcome: Check every link on the pages of a site.
+    aliases:
+      - Check site links
+      - Check site links on this host
+      - Check the links on a target
+      - Verify links on this machine
+    parameters:
+      target: {type: Target, extract: target}
+      depths: {type: DepthSpec, required: false}
+    classes: [web]
+    dependencies:
+      - core: web.page_discovery
+        input: {target: target}
+        output: discovered_pages
+      - core: web.link_discovery
+        input: {pages: discovered_pages, depths: depths}
+        output: found_links
+      - core: web.link_check
+        input: {links: found_links}
+        output: checked_links
+    result: {source: checked_links}
+
+  - goal: WEB.SITEMAP
+    version: "1.0"
+    name: Build sitemap
+    outcome: Check links and produce a sitemap of the site.
+    aliases:
+      - Check links and produce a sitemap
+      - Produce a sitemap
+      - Build a sitemap
+    parameters:
+      target: {type: Target, extract: target}
+    classes: [web]
+    dependencies:
+      - goal: WEB.PAGE_MAP
+        input: {target: target}
+        output: pages
+      - goal: WEB.SITE_LINKS
+        input: {target: target}
+        output: checked
+      - core: web.sitemap
+        input: {pages: pages, checked: checked}
+        output: sitemap
+    result: {source: sitemap}
+
+  - goal: WEB.LINK_REVIEW
+    version: "1.0"
+    name: Review links
+    outcome: Find the links on a site that fail to load.
+    aliases:
+      - Review links
+      - Find broken links on a target
+    parameters:
+      target: {type: Target, extract: target}
+    classes: [web]
+    dependencies:
+      - goal: WEB.SITE_LINKS
+        input: {target: target}
+        output: checked
+      - core: web.broken_links
+        input: {checked: checked}
+        output: issues
+    result: {source: issues}
+
+  - goal: WEB.SITE_AUDIT
+    version: "1.0"
+    name: Audit site
+    outcome: Audit a site and produce a consolidated site report.
+    aliases:
+      - Audit this site and generate a site report
+      - Audit this site and produce a site report
+    parameters:
+      target: {type: Target, extract: target}
+    classes: [web, reporting]
+    dependencies:
+      - goal: WEB.PAGE_MAP
+        input: {target: target}
+        output: pages
+      - goal: WEB.SITE_LINKS
+        input: {target: target}
+        output: checked
+      - goal: WEB.LINK_REVIEW
+        input: {target: target}
+        output: issues
+      - core: reporting.site_report
+        input: {pages: pages, checked: checked, issues: issues}
+        output: report
+    result: {source: report}

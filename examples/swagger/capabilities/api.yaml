@@ -1,0 +1,67 @@
+class: api
+title: API
+description: Read what an API offers from its OpenAPI or Swagger document.
+keywords: [api, swagger, openapi, endpoint, rest]
+expose_all_below: 8
+
+types:
+  ApiUrl:
+    type: string
+    aliases: [url, spec_url, swagger_url, openapi_url]
+  EndpointPath:
+    type: string
+    aliases: [path, route, endpoint]
+  HttpMethod:
+    type: string
+    aliases: [method, verb]
+  ApiInfo:
+    type: object
+    required: [title, version]
+    properties:
+      title: {type: string}
+      version: {type: string}
+      description: {type: string}
+      servers: {type: array, items: {type: object}}
+      pathCount: {type: integer}
+  Endpoint:
+    type: object
+    required: [path, method]
+    properties:
+      path: {type: string}
+      method: {type: string}
+      summary: {type: string}
+      operationId: {type: string}
+      tags: {type: array, items: {type: string}}
+  EndpointList:
+    type: array
+    items: {ref: Endpoint}
+  EndpointDetails:
+    type: object
+
+cores:
+  api.describe:
+    name: Describe API
+    contract: 1
+    description: Read an API's title, version and servers.
+    inputs:
+      spec_url: {type: ApiUrl}
+    output: ApiInfo
+    permissions: [api.read]
+  api.list_endpoints:
+    name: List API endpoints
+    contract: 1
+    description: List the endpoints an API offers.
+    inputs:
+      spec_url: {type: ApiUrl}
+    output: EndpointList
+    permissions: [api.read]
+  api.endpoint_details:
+    name: Get API endpoint details
+    contract: 1
+    description: Read one endpoint's parameters and responses.
+    inputs:
+      spec_url: {type: ApiUrl}
+      path: {type: EndpointPath}
+      method: {type: HttpMethod}
+    output: EndpointDetails
+    permissions: [api.read]

@@ -1,0 +1,24 @@
+class: reporting
+title: Reporting
+description: Turn what was found into a report.
+keywords: [report, summary]
+expose_all_below: 8
+
+types:
+  Report:
+    type: object
+    required: [title, markdown]
+    properties:
+      title: {type: string}
+      markdown: {type: string}
+
+cores:
+  reporting.site_report:
+    name: Generate site report
+    contract: 1
+    description: Render pages, checked links and issues as a report.
+    inputs:
+      pages: {type: PageList}
+      checked: {type: CheckedLinkList}
+      issues: {type: IssueList}
+    output: Report

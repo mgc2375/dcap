@@ -1,0 +1,15 @@
+providers:
+  - provider: placeholder.native
+    version: "0.1.0"
+    kind: native
+    priority: 10
+    simulated: true  # canned data, loaded only with --simulate or DCAP_SIMULATE=1
+    vendor: [placeholder.py]
+    implements:
+      web.page_discovery: {contract: 1, operation: "dcap.runtime.placeholder:discover_pages"}
+      web.link_discovery: {contract: 1, operation: "dcap.runtime.placeholder:discover_links"}
+      web.link_check: {contract: 1, operation: "dcap.runtime.placeholder:check_links"}
+      web.metadata: {contract: 1, operation: "dcap.runtime.placeholder:read_metadata"}
+      web.broken_links: {contract: 1, operation: "dcap.runtime.placeholder:find_broken_links"}
+      web.sitemap: {contract: 1, operation: "dcap.runtime.placeholder:build_sitemap"}
+      reporting.site_report: {contract: 1, operation: "dcap.runtime.placeholder:site_report"}

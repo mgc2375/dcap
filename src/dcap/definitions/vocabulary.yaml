@@ -1,0 +1,9 @@
+stopwords: [a, an, the, this, that, these, those, my, our, me, us, i, we, "on", in, at, of, for, to, and, then, with, from, please, them, it, what, is, are, all, any, can, you, could, would, s, run, do, perform, get, need, want, give, tell]
+vague_cues: [help, show, investigate, explore, look, available, poke, understand, about]
+synonyms:
+  discover: [find, identify, detect, list, locate, enumerate, crawl]
+  check: [verify, validate]
+  generate: [produce, create, build, make, write]
+  review: [evaluate, audit, inspect, assess]
+  page: [document]
+target_phrases: [this host, this machine, this server, this box, localhost]

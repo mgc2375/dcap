@@ -1,0 +1,15 @@
+providers:
+  - provider: dcap.live
+    version: "0.1.0"
+    kind: native
+    priority: 10
+    simulated: false  # real requests, loaded unless the operator asks for canned data
+    vendor: [live.py, policy.py]
+    implements:
+      web.page_discovery: {contract: 1, operation: "dcap.runtime.live:discover_pages"}
+      web.link_discovery: {contract: 1, operation: "dcap.runtime.live:discover_links"}
+      web.link_check: {contract: 1, operation: "dcap.runtime.live:check_links"}
+      web.metadata: {contract: 1, operation: "dcap.runtime.live:read_metadata"}
+      web.broken_links: {contract: 1, operation: "dcap.runtime.live:find_broken_links"}
+      web.sitemap: {contract: 1, operation: "dcap.runtime.live:build_sitemap"}
+      reporting.site_report: {contract: 1, operation: "dcap.runtime.live:site_report"}

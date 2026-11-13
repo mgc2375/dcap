@@ -1,0 +1,27 @@
+# A small read-only MCP server that ships with this example. It reads OpenAPI documents only.
+# A path starting with ./ is relative to this file.
+providers:
+  - provider: swagger.mcp
+    version: "1"
+    kind: mcp
+    priority: 10
+    command:
+      - python3
+      - ./../server.py
+    implements:
+      api.describe:
+        contract: 1
+        operation: fetch_swagger_info
+        input_map: {spec_url: url}
+      api.list_endpoints:
+        contract: 1
+        operation: list_endpoints
+        before:
+          - tool: fetch_swagger_info
+            input_map: {spec_url: url}
+      api.endpoint_details:
+        contract: 1
+        operation: get_endpoint_details
+        before:
+          - tool: fetch_swagger_info
+            input_map: {spec_url: url}

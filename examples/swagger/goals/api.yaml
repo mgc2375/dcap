@@ -1,0 +1,17 @@
+goals:
+  - goal: API.LIST_ENDPOINTS
+    version: "1.0"
+    name: List API endpoints
+    outcome: List the endpoints an API offers.
+    aliases:
+      - List API endpoints
+      - List the endpoints of this API
+      - Find the endpoints in an OpenAPI spec
+    parameters:
+      spec_url: {type: ApiUrl}
+    classes: [api]
+    dependencies:
+      - core: api.list_endpoints
+        input: {spec_url: spec_url}
+        output: endpoints
+    result: {source: endpoints}

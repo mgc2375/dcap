@@ -1,0 +1,134 @@
+class: web
+title: Web
+description: Find a site's pages, check its links and report what is broken.
+keywords: [website, web, site, page, link, url, sitemap, domain, http]
+expose_all_below: 8
+permissions: [web.fetch]
+
+types:
+  Target:
+    type: string
+    pattern: "[0-9A-Za-z_.:-]+(/[0-9]{1,3})?"
+    aliases: [target, site, host, hostname, address, addr, ip, url]
+  DepthSpec:
+    type: array
+    items: {type: integer}
+    aliases: [depths, depth_list]
+  Page:
+    type: object
+    required: [address]
+    properties:
+      address: {type: string}
+      url: {type: string}
+  PageList:
+    type: array
+    items: {ref: Page}
+    aliases: [pages, page_list]
+  Link:
+    type: object
+    required: [address, depth, kind]
+    properties:
+      address: {type: string}
+      depth: {type: integer}
+      kind: {type: string}
+      url: {type: string}
+      source: {type: string}
+  LinkList:
+    type: array
+    items: {ref: Link}
+    aliases: [links]
+  CheckedLink:
+    type: object
+    required: [address, depth, kind, status]
+    properties:
+      address: {type: string}
+      depth: {type: integer}
+      kind: {type: string}
+      status: {type: string}
+      title: {type: string}
+      metadata: {type: object}
+      url: {type: string}
+      source: {type: string}
+  CheckedLinkList:
+    type: array
+    items: {ref: CheckedLink}
+    aliases: [checked, checked_links]
+  SiteMetadata:
+    type: array
+    items: {type: object}
+  Issue:
+    type: object
+    required: [address, depth, severity, title]
+    properties:
+      address: {type: string}
+      depth: {type: integer}
+      severity: {type: string, enum: [low, medium, high]}
+      title: {type: string}
+      url: {type: string}
+      source: {type: string}
+  IssueList:
+    type: array
+    items: {ref: Issue}
+    aliases: [issues]
+  Sitemap:
+    type: object
+    required: [pages]
+    properties:
+      pages: {type: array, items: {type: object}}
+
+cores:
+  web.page_discovery:
+    name: Discover pages
+    contract: 1
+    description: Find the pages of a site.
+    inputs:
+      target: {type: Target}
+    output: PageList
+    execution: {timeout_s: 120}
+    permissions: [web.fetch]
+    scope: target
+  web.link_discovery:
+    name: Discover links
+    contract: 1
+    description: Find the links on pages.
+    inputs:
+      pages: {type: PageList}
+      depths: {type: DepthSpec, required: false}
+    output: LinkList
+    execution: {timeout_s: 120}
+    permissions: [web.fetch]
+    scope: pages
+  web.link_check:
+    name: Check links
+    contract: 1
+    description: Check whether each link loads.
+    inputs:
+      links: {type: LinkList}
+    output: CheckedLinkList
+    execution: {timeout_s: 120}
+    permissions: [web.fetch]
+    scope: links
+  web.metadata:
+    name: Read site metadata
+    contract: 1
+    description: Read a site's title and metadata.
+    inputs:
+      target: {type: Target}
+    output: SiteMetadata
+    permissions: [web.fetch]
+    scope: target
+  web.broken_links:
+    name: Find broken links
+    contract: 1
+    description: Pick out links that failed to load.
+    inputs:
+      checked: {type: CheckedLinkList}
+    output: IssueList
+  web.sitemap:
+    name: Build sitemap
+    contract: 1
+    description: Combine pages and checked links into a sitemap.
+    inputs:
+      pages: {type: PageList}
+      checked: {type: CheckedLinkList}
+    output: Sitemap
